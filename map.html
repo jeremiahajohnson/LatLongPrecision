@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>test</title>
+    <style>
+        html,body {
+            margin: 0px;
+            padding: 0px;
+        }
+        #mapDiv {
+            height: 800px;
+            width: 1000px;
+        }
+        .map .container{
+            max-width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.9/js/esri/css/esri.css"/>
+    <script src="http://js.arcgis.com/3.9/"></script>
+</head>
+<body>
+    <div id="mapDiv"></div>
+    <div id="coords"></div>
+    <button id="clear">Clear graphics</button>
+    <script type="application/javascript">
+        require([
+            "esri/map", "esri/geometry/webMercatorUtils", "esri/graphic", "esri/Color", "esri/SpatialReference",
+            "esri/geometry/Extent",
+            "esri/symbols/SimpleMarkerSymbol", "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol",
+            "dojo/dom", "dojo/on"
+        ],function(
+            Map, webMercatorUtils, Graphic, Color, SpatialReference,
+            Extent,
+            SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol,
+            dom, on
+            ){
+                var map = new Map("mapDiv", {
+                    center: [-97.742581, 30.2837352],
+                    zoom: 9,
+                    basemap: "streets"
+                });
+                
+                var symbolA = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+                    new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                    new Color("blue"), 2),new Color([255,255,0,0.25])
+                  );
+                
+                var symbolB = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+                    new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                    new Color("red"), 2),new Color([255,255,0,0.25])
+                  );
+                
+                var symbolC = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+                    new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                    new Color("green"), 2),new Color([255,255,0,0.25])
+                  );
+                
+                var symbolD = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+                    new SimpleLineSymbol(SimpleLineSymbol.STYLE_SOLID,
+                    new Color("black"), 2),new Color([255,255,0,0.25])
+                  );
+                
+                map.on('click', function(evt){
+                    var point = evt.mapPoint;
+                    var xminA = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).x - 0.1;
+                    var xmaxA = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).x + 0.1;
+                    var yminA = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).y - 0.1;
+                    var ymaxA = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).y + 0.1;
+                    
+                    var geometryA = new Extent(xminA,yminA,xmaxA,ymaxA, new SpatialReference({ wkid:4326 }))
+                    map.graphics.add(new Graphic(geometryA, symbolA));
+                    
+                    
+                    var xminB = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).x - 0.01;
+                    var xmaxB = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).x + 0.01;
+                    var yminB = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).y - 0.01;
+                    var ymaxB = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).y + 0.01;
+                    
+                    var geometryB = new Extent(xminB,yminB,xmaxB,ymaxB, new SpatialReference({ wkid:4326 }))
+                    map.graphics.add(new Graphic(geometryB, symbolB));
+                    
+                    var xminC = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).x - 0.001;
+                    var xmaxC = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).x + 0.001;
+                    var yminC = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).y - 0.001;
+                    var ymaxC = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).y + 0.001;
+                    
+                    var geometryC = new Extent(xminC,yminC,xmaxC,ymaxC, new SpatialReference({ wkid:4326 }))
+                    map.graphics.add(new Graphic(geometryC, symbolC));
+                    
+                    var xminD = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).x - 0.0001;
+                    var xmaxD = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).x + 0.0001;
+                    var yminD = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).y - 0.0001;
+                    var ymaxD = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).y + 0.0001;
+                    
+                    var geometryD = new Extent(xminD,yminD,xmaxD,ymaxD, new SpatialReference({ wkid:4326 }))
+                    map.graphics.add(new Graphic(geometryD, symbolD));
+                });
+                map.on('mouse-move',function(evt){
+                    var x = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).x;
+                    var y = webMercatorUtils.webMercatorToGeographic(evt.mapPoint).y;
+                    dom.byId("coords").innerHTML = y + ", " + x;
+                });
+                
+                on(dom.byId("clear"),'click',function(){map.graphics.clear();});
+        });
+    </script>
+</body>
+</html>
